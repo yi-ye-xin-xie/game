@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using UnityEngine;
 
 public class CameraControlled : MonoBehaviour
@@ -6,13 +7,16 @@ public class CameraControlled : MonoBehaviour
     public Transform target;
     public Vector3 offset;
     private Vector2 angles;
+    [Header("相机参数")]
+    public float distance; //距离
+    public float zoomSpeed; // 缩放速度
+    public Vector2 distanceLimit;
     void Start()
     {
         angles = new(transform.eulerAngles.x, transform.eulerAngles.y);
         if (target == null)
         {
-            Debug.LogWarning("环绕目标为空,正在尝试查找玩家对象(Player)");
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            Debug.LogWarning("环绕目标为空,请检查是否指定对象");
         }
     }
     void LateUpdate()
@@ -22,5 +26,12 @@ public class CameraControlled : MonoBehaviour
             angles.x += Input.GetAxis("Mouse X");
             angles.y += Input.GetAxis("Mouse Y");
         }
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        distance = Mathf.Clamp(distance - scroll * zoomSpeed, distanceLimit.x,distanceLimit.y);
+
+        Quaternion rotation = Quaternion.Euler(angles.x, angles.y, 0);
+        Vector3 negDistance = new(0, 0, -distance);
+        Vector3 position = rotation * negDistance + target.position;
+        transform.SetPositionAndRotation(position, rotation);
     }
 }
