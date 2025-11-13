@@ -21,7 +21,7 @@ public class CameraControlled : MonoBehaviour
     }
     void LateUpdate()
     {
-        if(Input.GetMouseButtonDown(0))
+        if(Input.GetMouseButton(0))
         {
             angles.x += Input.GetAxis("Mouse X");
             angles.y += Input.GetAxis("Mouse Y");
@@ -29,9 +29,9 @@ public class CameraControlled : MonoBehaviour
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         distance = Mathf.Clamp(distance - scroll * zoomSpeed, distanceLimit.x,distanceLimit.y);
 
-        Quaternion rotation = Quaternion.Euler(angles.x, angles.y, 0);
+        Quaternion rotation = Quaternion.Euler(angles.y, angles.x, 0);
         Vector3 negDistance = new(0, 0, -distance);
-        Vector3 position = rotation * negDistance + target.position;
+        Vector3 position = rotation * negDistance + target.position + offset;
         transform.SetPositionAndRotation(position, rotation);
     }
 }
