@@ -9,8 +9,10 @@ public class CameraControlled : MonoBehaviour
     private Vector2 angles;
     [Header("相机参数")]
     public float distance; //距离
+    [Header("相机设置")]
     public float zoomSpeed; // 缩放速度
-    public Vector2 distanceLimit;
+    public Vector2 distanceLimit; //缩放限制
+    public Vector2 speed; //视角灵敏度
     void Start()
     {
         angles = new(transform.eulerAngles.x, transform.eulerAngles.y);
@@ -23,8 +25,8 @@ public class CameraControlled : MonoBehaviour
     {
         if(Input.GetMouseButton(0))
         {
-            angles.x += Input.GetAxis("Mouse X");
-            angles.y += Input.GetAxis("Mouse Y");
+            angles.x += Input.GetAxis("Mouse X") * distance * speed.x;
+            angles.y -= Input.GetAxis("Mouse Y") * speed.y;
         }
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         distance = Mathf.Clamp(distance - scroll * zoomSpeed, distanceLimit.x,distanceLimit.y);
